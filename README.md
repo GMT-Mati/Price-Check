@@ -1,110 +1,87 @@
 ```markdown
-# Price Monitoring Script
+# Price Checker
 
-This Python script monitors the price of a product on a selected internet store and sends an email notification if the price drops below a specified threshold.
+This Python program is designed to monitor the prices of specific items on e-commerce websites and send email notifications when the prices fall below predefined thresholds. It uses web scraping techniques to extract price information from the websites and sends email alerts if the conditions are met.
 
-## Requirements
+## Prerequisites
 
-- Python 3
-- `requests` library
-- `BeautifulSoup` library
-- SMTP email account (Gmail in this example)
+Before running the program, ensure you have the following:
 
-## Installation
+- Python installed on your system.
+- The required Python packages installed:
+  - `requests`
+  - `beautifulsoup4`
 
-1. Clone this repository to your local machine:
+You can install these packages using pip:
 
-   ```bash
-   git clone https://github.com/yourusername/price-monitor.git
-   ```
-
-2. Install the required Python libraries:
-
-   ```bash
-   pip install requests beautifulsoup4
-   ```
+```bash
+pip install requests beautifulsoup4
+```
 
 ## Configuration
 
-1. Open the `price_monitor.py` file and update the following variables:
-
-   - `product_url`: URL of the product page you want to monitor.
-   - `target_price`: Price threshold below which you want to be notified.
-   - `sender_email`: Your email address for sending notifications.
-   - `sender_password`: Your email account password.
-   - `receiver_email`: Recipient's email address.
-
-2. Make sure your Python script is executable:
-
-   ```bash
-   chmod +x price_monitor.py
-   ```
-
-## Usage
-
-To run the script manually, execute the following command:
+1. Clone this repository to your local machine:
 
 ```bash
-./price_monitor.py
+git clone https://github.com/yourusername/price-checker.git
+cd price-checker
 ```
 
-## Running Automatically on Startup (Linux)
+2. Open the `config.py` file in the project directory and configure it with your email credentials and the URLs you want to monitor, along with their respective price thresholds.
 
-To run the script automatically when your computer starts, follow these steps:
+```python
+# config.py
 
-1. Create a systemd service unit file:
+# Email Configuration
+sender_email = "your_email@gmail.com"
+sender_password = "your_email_password"
+recipient_email = "recipient_email@gmail.com"
 
-   ```bash
-   sudo nano /etc/systemd/system/price_monitor.service
-   ```
+# User-Agent for HTTP requests (you can leave this as is)
+user_agent = "Your User Agent"
 
-2. Add the following content to the `price_monitor.service` file:
+# URLs to monitor with their respective price thresholds
+urls = [
+    ("https://www.notino.pl/azzaro/chrome-woda-toaletowa-dla-mczyzn/p-59969/", 300),
+    ("https://www.notino.pl/guerlain/aqua-allegoria-pera-granita-woda-toaletowa-dla-kobiet/", 400),
+    ("https://www.euro.com.pl/odkurzacze-automatyczne/roborock-s8-czarny-mopowanie.bhtml?cd=191780169&ad=10070947089&kd=&gclid=EAIaIQobChMI3o7gg7XAgQMV2OyyCh0vZQ5aEAQYBCABEgLcOvD_BwE&gclsrc=aw.ds", 2500),
+    ("https://www.euro.com.pl/odkurzacze-automatyczne/roborock-q7-max-bialy.bhtml?&cd=191780169&ad=10070947089&kd=&gclid=Cj0KCQjwvL-oBhCxARIsAHkOiu0R-ybG2gKqgA2JwP9MWxqIoeNi60vhT709nlSer7e6CMqssst_084aAmyKEALw_wcB&gclsrc=aw.ds", 2000)
+]
+```
 
-   ```ini
-   [Unit]
-   Description=Price Monitor Service
+Ensure that you provide your email credentials and URLs with the appropriate price thresholds in the `config.py` file.
 
-   [Service]
-   ExecStart=/usr/bin/python3 /path/to/your/price_monitor.py
-   Restart=always
-   User=your_username
-   WorkingDirectory=/path/to/your/script/directory
+## Running the Program
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-   Replace `/path/to/your/price_monitor.py` with the actual path to your Python script and `your_username` with your Linux username.
-
-3. Save the file and exit the text editor.
-
-4. Reload the systemd manager configuration:
-
-   ```bash
-   sudo systemctl daemon-reload
-   ```
-
-5. Enable the service to start on boot:
-
-   ```bash
-   sudo systemctl enable price_monitor.service
-   ```
-
-6. Start the service:
-
-   ```bash
-   sudo systemctl start price_monitor.service
-   ```
-
-You can check the status of your service with:
+You can manually run the program using the following command:
 
 ```bash
-sudo systemctl status price_monitor.service
+python price_checker.py
 ```
 
-If you need to stop or restart the service, you can use the `systemctl` commands as well.
+## Scheduling Daily Checks (Linux)
+
+To schedule the program to run daily at a specific time on a Linux machine, you can use `cron`. Follow these steps:
+
+1. Open your crontab configuration:
+
+```bash
+crontab -e
+```
+
+2. Add an entry to run the program daily at your desired time. For example, to run the program every day at 9:00 AM, add the following line to your crontab:
+
+```bash
+0 9 * * * /usr/bin/python3 /path/to/price_checker.py
+```
+
+Replace `/path/to/price_checker.py` with the actual path to your `price_checker.py` script.
+
+3. Save and exit the crontab editor.
+
+The program will now run daily at the specified time, checking the prices and sending email notifications when necessary.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ```
